@@ -1,11 +1,8 @@
 extern crate elfinfo;
 
-use std::fs::File;
-
-
 fn main() {
-    let file = File::open("test-elf").unwrap();
-    if let Err(e) = elfinfo::run(file) {
+    let filename = "test-elf";
+    if let Err(e) = elfinfo::run(filename) {
         eprintln!("Application Error: {}", e);
-    }
+    };
 }
