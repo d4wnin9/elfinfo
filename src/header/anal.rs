@@ -3,14 +3,14 @@ use crate::*;
 
 /* e_ident[] indexes */
 const EI_MAG0: usize = 0;
-const EI_MAG1: usize = 1;
-const EI_MAG2: usize = 2;
+// const EI_MAG1: usize = 1;
+// const EI_MAG2: usize = 2;
 const EI_MAG3: usize = 3;
 const EI_CLASS: usize = 4;
 const EI_DATA: usize = 5;
 const EI_VERSION: usize = 6;
 const EI_OSABI: usize = 7;
-const EI_PAD: usize = 8;
+// const EI_PAD: usize = 8;
 
 /* EI_MAG */
 const ELFMAG0: u8 = 0x7f;
@@ -22,7 +22,7 @@ const ELFMAG3: u8 = 0x46;
 const ELFCLASSNONE: u8 = 0x00;
 const ELFCLASS32: u8 = 0x01;
 const ELFCLASS64: u8 = 0x02;
-const ELFCLASSNUM: u8 = 0x03;
+// const ELFCLASSNUM: u8 = 0x03;
 
 /* e_ident[EI_DATA] */
 const ELFDATANONE: u8 = 0x00;
@@ -51,6 +51,7 @@ const ET_HIPROC: [u8; 2] = [0xff, 0xff];
 
 /* Machine list */
 const EM_X86_64: [u8; 2] = [0x3e, 0x00];
+const EM_AARCH_64: [u8; 2] = [0xb7, 0x00];
 
 
 pub fn is_elf(e_ident: [u8; 16]) -> bool {
@@ -79,7 +80,7 @@ pub fn ei_data(e_ident: [u8; 16]) -> String {
         "?".to_string()
     } else if e_ident[EI_DATA] == ELFDATA2LSB {
         "little endian".to_string()
-    }else if e_ident[EI_DATA] == ELFDATA2MSB {
+    } else if e_ident[EI_DATA] == ELFDATA2MSB {
         "big endian".to_string()
     } else {
         "Wrong format".to_string()
@@ -135,6 +136,8 @@ pub fn elf_type(e_type: Elf64Half) -> String {
 pub fn elf_machine(e_machine: Elf64Half) -> String {
     if e_machine == EM_X86_64 {
         "x86-64 architecture".to_string()
+    } else if e_machine == EM_AARCH_64 {
+        "Aarch64".to_string()
     } else {
         "I don't know".to_string()
     }
@@ -149,40 +152,39 @@ pub fn elf_entry(e_entry: Elf64Addr) -> String {
     e_entry.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
 }
 
-/*
-pub fn elf_phoff(e_phoff: Elf64Off) {
 
+pub fn elf_phoff(e_phoff: Elf64Off) -> String {
+    e_phoff.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
 }
 
-pub fn elf_shoff(e_shoff: Elf64Off) {
-
+pub fn elf_shoff(e_shoff: Elf64Off) -> String {
+    e_shoff.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
 }
 
-pub fn elf_flags(e_flags: Elf64Word) {
-
+pub fn elf_flags(e_flags: Elf64Word) -> String {
+    e_flags.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
 }
 
-pub fn elf_hsize(e_hsize: Elf64Half) {
-
+pub fn elf_hsize(e_hsize: Elf64Half) -> String {
+    e_hsize.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
 }
 
-pub fn elf_phsize(e_phsize: Elf64Half) {
-
+pub fn elf_phsize(e_phsize: Elf64Half) -> String {
+    e_phsize.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
 }
 
-pub fn elf_phnum(e_phnum: Elf64Half) {
-
+pub fn elf_phnum(e_phnum: Elf64Half) -> String {
+    e_phnum.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
 }
 
-pub fn elf_shsize(e_shsize: Elf64Half) {
-
+pub fn elf_shsize(e_shsize: Elf64Half) -> String {
+    e_shsize.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
 }
 
-pub fn elf_shnum(e_shnum: Elf64Half) {
-
+pub fn elf_shnum(e_shnum: Elf64Half) -> String {
+    e_shnum.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
 }
 
-pub fn elf_shstrndx(e_shstrndx: Elf64Half) {
-
+pub fn elf_shstrndx(e_shstrndx: Elf64Half) -> String {
+    e_shstrndx.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
 }
-*/

@@ -1,7 +1,5 @@
 use crate::*;
 
-use std::io::{self, Write};
-
 
 // elf64 header template
 pub struct Elf64Hdr {
@@ -122,105 +120,21 @@ pub fn show_hdr(hdr: Elf64Hdr) {
 
     println!("  Entry point address:               0x{}", elf_entry(hdr.e_entry));
 
+    println!("  Start of program headers:          0x{} (bytes into file)", elf_phoff(hdr.e_phoff));
 
+    println!("  Start of section headers:          0x{} (bytes into file)", elf_shoff(hdr.e_shoff));
 
-    println!("\n\n");
+    println!("  Flags:                             0x{}", elf_flags(hdr.e_flags));
 
-    print!("hdr.e_ident: ");
-    for x in hdr.e_ident.iter() {
-        print!("{:<02x} ", x);
-    }
-    print!("\n");
-    io::stdout().flush().unwrap();
+    println!("  Size of this header:               0x{} (bytes)", elf_hsize(hdr.e_hsize));
 
-    print!("hdr.e_type: ");
-    for x in hdr.e_type.iter() {
-        print!("{:<02x} ", x);
-    }
-    print!("\n");
-    io::stdout().flush().unwrap();
+    println!("  Size of program headers:           0x{} (bytes)", elf_phsize(hdr.e_phsize));
 
-    print!("hdr.e_machine: ");
-    for x in hdr.e_machine.iter() {
-        print!("{:<02x} ", x);
-    }
-    print!("\n");
-    io::stdout().flush().unwrap();
+    println!("  Number of program headers:         0x{}", elf_phnum(hdr.e_phnum));
 
-    print!("hdr.e_version: ");
-    for x in hdr.e_version.iter() {
-        print!("{:<02x} ", x);
-    }
-    print!("\n");
-    io::stdout().flush().unwrap();
+    println!("  Size of section headers:           0x{} (bytes)", elf_shsize(hdr.e_shsize));
 
-    print!("hdr.e_entry: ");
-    for x in hdr.e_entry.iter() {
-        print!("{:<02x} ", x);
-    }
-    print!("\n");
-    io::stdout().flush().unwrap();
+    println!("  Number of section headers:         0x{}", elf_shnum(hdr.e_shnum));
 
-    print!("hdr.e_phoff: ");
-    for x in hdr.e_phoff.iter() {
-        print!("{:<02x} ", x);
-    }
-    print!("\n");
-    io::stdout().flush().unwrap();
-
-    print!("hdr.e_shoff: ");
-    for x in hdr.e_shoff.iter() {
-        print!("{:<02x} ", x);
-    }
-    print!("\n");
-    io::stdout().flush().unwrap();
-
-    print!("hdr.e_flags: ");
-    for x in hdr.e_flags.iter() {
-        print!("{:<02x} ", x);
-    }
-    print!("\n");
-    io::stdout().flush().unwrap();
-
-    print!("hdr.e_hsize: ");
-    for x in hdr.e_hsize.iter() {
-        print!("{:<02x} ", x);
-    }
-    print!("\n");
-    io::stdout().flush().unwrap();
-
-    print!("hdr.e_phsize: ");
-    for x in hdr.e_phsize.iter() {
-        print!("{:<02x} ", x);
-    }
-    print!("\n");
-    io::stdout().flush().unwrap();
-
-    print!("hdr.e_phnum: ");
-    for x in hdr.e_phnum.iter() {
-        print!("{:<02x} ", x);
-    }
-    print!("\n");
-    io::stdout().flush().unwrap();
-
-    print!("hdr.e_shsize: ");
-    for x in hdr.e_shsize.iter() {
-        print!("{:<02x} ", x);
-    }
-    print!("\n");
-    io::stdout().flush().unwrap();
-
-    print!("hdr.e_shnum: ");
-    for x in hdr.e_shnum.iter() {
-        print!("{:<02x} ", x);
-    }
-    print!("\n");
-    io::stdout().flush().unwrap();
-
-    print!("hdr.e_shstrndx: ");
-    for x in hdr.e_shstrndx.iter() {
-        print!("{:<02x} ", x);
-    }
-    print!("\n");
-    io::stdout().flush().unwrap();
+    println!("  Section header string table index: 0x{}", elf_shstrndx(hdr.e_shstrndx));
 }
