@@ -147,17 +147,27 @@ pub fn elf_version(e_version: Elf64Word) {
 
 }
 */
-
-pub fn elf_entry(e_entry: Elf64Addr) -> String {
+pub fn elf32_entry(e_entry: Elf32Addr) -> String {
     e_entry.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
 }
 
+pub fn elf64_entry(e_entry: Elf64Addr) -> String {
+    e_entry.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
+}
 
-pub fn elf_phoff(e_phoff: Elf64Off) -> String {
+pub fn elf32_phoff(e_phoff: Elf32Addr) -> String {
     e_phoff.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
 }
 
-pub fn elf_shoff(e_shoff: Elf64Off) -> String {
+pub fn elf64_phoff(e_phoff: Elf64Off) -> String {
+    e_phoff.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
+}
+
+pub fn elf32_shoff(e_shoff: Elf32Addr) -> String {
+    e_shoff.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
+}
+
+pub fn elf64_shoff(e_shoff: Elf64Off) -> String {
     e_shoff.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
 }
 
