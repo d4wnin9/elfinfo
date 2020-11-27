@@ -1,4 +1,5 @@
 use crate::*;
+use std::usize;
 
 
 // elf64 header
@@ -96,45 +97,99 @@ impl Elf64Hdr {
     }
 }
 
-// elf64 header preview
-pub fn show_elf64_hdr(hdr: Elf64Hdr) {
-    if is_elf(hdr.e_ident) {
-        println!("ELF Header:");
-    } else {
-        println!("Broken ELF Header :(");
+// elf64 program header
+pub struct Elf64Phdr {
+    pub p_type: Elf64Word,
+    pub p_flags: Elf64Word,
+    pub p_offset: Elf64Off,
+    pub p_vaddr: Elf64Addr,
+    pub p_paddr: Elf64Addr,
+    pub p_filesz: Elf64Xword,
+    pub p_memsz: Elf64Xword,
+    pub p_align: Elf64Xword,
+}
+
+impl Elf64Phdr {
+    pub fn new(bin: &[u8], e_phoff: usize) -> Elf64Phdr {
+        let mut p_type: Elf64Word = [0; 4];
+        for (i, b) in bin[e_phoff..e_phoff+4].iter().enumerate() {
+            p_type[i] = *b;
+        }
+        let mut p_flags: Elf64Word = [0; 4];
+        for (i, b) in bin[e_phoff+4..e_phoff+8].iter().enumerate() {
+            p_flags[i] = *b;
+        }
+        let mut p_offset: Elf64Off = [0; 8];
+        for (i, b) in bin[e_phoff+8..e_phoff+16].iter().enumerate() {
+            p_offset[i] = *b;
+        }
+        let mut p_vaddr: Elf64Addr= [0; 8];
+        for (i, b) in bin[e_phoff+16..e_phoff+24].iter().enumerate() {
+            p_vaddr[i] = *b;
+        }
+        let mut p_paddr: Elf64Addr = [0; 8];
+        for (i, b) in bin[e_phoff+24..e_phoff+32].iter().enumerate() {
+            p_paddr[i] = *b;
+        }
+        let mut p_filesz: Elf64Xword = [0; 8];
+        for (i, b) in bin[e_phoff+32..e_phoff+40].iter().enumerate() {
+            p_filesz[i] = *b;
+        }
+        let mut p_memsz: Elf64Xword = [0; 8];
+        for (i, b) in bin[e_phoff+40..e_phoff+48].iter().enumerate() {
+            p_memsz[i] = *b;
+        }
+        let mut p_align: Elf64Xword = [0; 8];
+        for (i, b) in bin[e_phoff+48..e_phoff+56].iter().enumerate() {
+            p_align[i] = *b;
+        }
+        Elf64Phdr {
+            p_type,
+            p_flags,
+            p_offset,
+            p_vaddr,
+            p_paddr,
+            p_filesz,
+            p_memsz,
+            p_align,
+        }
     }
+}
 
+
+// elf64 header preview
+pub fn print_elf64_hdr(hdr: Elf64Hdr) {
+    println!("ELF Header:");
     println!("  Magic:   {}", ei_magic(hdr.e_ident));
-
     println!("  Class:                             {}", ei_class(hdr.e_ident));
-
     println!("  Data:                              {}", ei_data(hdr.e_ident));
-
     println!("  Version:                           {}", ei_version(hdr.e_ident));
-
     println!("  OS/ABI:                            {}", ei_osabi(hdr.e_ident));
-
     println!("  Type:                              {}", elf_type(hdr.e_type));
-
     println!("  Machine:                           {}", elf_machine(hdr.e_machine));
-
     println!("  Entry point address:               0x{}", elf64_entry(hdr.e_entry));
-
     println!("  Start of program headers:          0x{} (bytes into file)", elf64_phoff(hdr.e_phoff));
-
     println!("  Start of section headers:          0x{} (bytes into file)", elf64_shoff(hdr.e_shoff));
-
     println!("  Flags:                             0x{}", elf_flags(hdr.e_flags));
-
     println!("  Size of this header:               0x{} (bytes)", elf_hsize(hdr.e_hsize));
-
     println!("  Size of program headers:           0x{} (bytes)", elf_phsize(hdr.e_phsize));
-
     println!("  Number of program headers:         0x{}", elf_phnum(hdr.e_phnum));
-
     println!("  Size of section headers:           0x{} (bytes)", elf_shsize(hdr.e_shsize));
-
     println!("  Number of section headers:         0x{}", elf_shnum(hdr.e_shnum));
-
     println!("  Section header string table index: 0x{}", elf_shstrndx(hdr.e_shstrndx));
+}
+
+pub fn print_elf64_phdr(hdr: Elf64Hdr, bin: &[u8]) {
+    let e_phoff = usize::from_str_radix(&elf64_phoff(hdr.e_phoff), 16).unwrap();
+    let phdr = Elf64Phdr::new(&bin, e_phoff);
+
+    // phdrを読めるようにした。
+    // phdrはe_phnum個連続しているので、順番にそれを読み取る
+
+
+
+    println!("ELF Program Header:");
+    println!("  Type:                              {}", elf_type(hdr.e_type));
+    println!("  Entry point address:               0x{}", elf64_entry(hdr.e_entry));
+    println!("  Start of program headers:          0x{} (bytes into file)", elf64_phoff(hdr.e_phoff));
 }

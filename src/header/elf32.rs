@@ -96,45 +96,38 @@ impl Elf32Hdr {
     }
 }
 
+// elf32 program header
+pub struct Elf32Phdr {
+    pub p_type: Elf32Word,
+    pub p_offset: Elf32Off,
+    pub p_vaddr: Elf32Addr,
+    pub p_paddr: Elf32Addr,
+    pub p_filesz: Elf32Word,
+    pub p_memsz: Elf32Word,
+    pub p_flags: Elf32Word,
+    pub p_align: Elf32Word,
+}
+
+
+
 // elf32 header preview
-pub fn show_elf32_hdr(hdr: Elf32Hdr) {
-    if is_elf(hdr.e_ident) {
-        println!("ELF Header:");
-    } else {
-        println!("Broken ELF Header :(");
-    }
-
+pub fn print_elf32_hdr(hdr: Elf32Hdr) {
+    println!("ELF Header:");
     println!("  Magic:   {}", ei_magic(hdr.e_ident));
-
     println!("  Class:                             {}", ei_class(hdr.e_ident));
-
     println!("  Data:                              {}", ei_data(hdr.e_ident));
-
     println!("  Version:                           {}", ei_version(hdr.e_ident));
-
     println!("  OS/ABI:                            {}", ei_osabi(hdr.e_ident));
-
     println!("  Type:                              {}", elf_type(hdr.e_type));
-
     println!("  Machine:                           {}", elf_machine(hdr.e_machine));
-
     println!("  Entry point address:               0x{}", elf32_entry(hdr.e_entry));
-
     println!("  Start of program headers:          0x{} (bytes into file)", elf32_phoff(hdr.e_phoff));
-
     println!("  Start of section headers:          0x{} (bytes into file)", elf32_shoff(hdr.e_shoff));
-
     println!("  Flags:                             0x{}", elf_flags(hdr.e_flags));
-
     println!("  Size of this header:               0x{} (bytes)", elf_hsize(hdr.e_hsize));
-
     println!("  Size of program headers:           0x{} (bytes)", elf_phsize(hdr.e_phsize));
-
     println!("  Number of program headers:         0x{}", elf_phnum(hdr.e_phnum));
-
     println!("  Size of section headers:           0x{} (bytes)", elf_shsize(hdr.e_shsize));
-
     println!("  Number of section headers:         0x{}", elf_shnum(hdr.e_shnum));
-
     println!("  Section header string table index: 0x{}", elf_shstrndx(hdr.e_shstrndx));
 }

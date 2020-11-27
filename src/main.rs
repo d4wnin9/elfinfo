@@ -11,10 +11,16 @@ fn main() {
         .author(crate_authors!())
         .about(crate_description!())
 
-        .arg(Arg::with_name("header")
-            .help("display header")
+        .arg(Arg::with_name("hdr")
+            .help("Display the ELF file header")
             .short("h")
             .long("file-header")
+        )
+
+        .arg(Arg::with_name("phdr")
+            .help("Display the program headers")
+            .short("l")
+            .long("program-headers")
         )
 
         .arg(Arg::with_name("filename")
@@ -26,8 +32,12 @@ fn main() {
 
     let filename: &str = args.value_of("filename").unwrap();
 
-    if args.is_present("header") {
-        if let Err(e) = elfinfo::run(filename) {
+    if args.is_present("hdr") {
+        if let Err(e) = elfinfo::run(filename, "hdr") {
+            eprintln!("Application Error: {}", e);
+        };
+    } else if args.is_present("phdr") {
+        if let Err(e) = elfinfo::run(filename, "phdr") {
             eprintln!("Application Error: {}", e);
         };
     } else {

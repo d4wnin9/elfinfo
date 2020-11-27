@@ -37,7 +37,7 @@ pub type Elf64Section = [u8; 2];  // u16
 pub type Elf64Versym = Elf64Half;  // u16
 
 
-pub fn run(filename: &str) -> Result<(), Box<dyn Error>>{
+pub fn run(filename: &str, flag: &str) -> Result<(), Box<dyn Error>>{
     let file = File::open(filename).unwrap();
     let mapped_file = unsafe { Mmap::map(&file).unwrap() };
 
@@ -48,8 +48,19 @@ pub fn run(filename: &str) -> Result<(), Box<dyn Error>>{
     if is_elf(e_ident) {
         match &*ei_class(e_ident) {
             "?" => println!("I don't know"),
-            "ELF32" => show_elf32_hdr(Elf32Hdr::new(&mapped_file)),
-            "ELF64" => show_elf64_hdr(Elf64Hdr::new(&mapped_file)),
+            "ELF32" => {
+                match flag {
+                    "hdr" => print_elf32_hdr(Elf32Hdr::new(&mapped_file)),
+                    _ => eprintln!("引数のflagsの処理ミスってますよ、"),
+                }
+            },
+            "ELF64" => {
+                match flag {
+                    "hdr" => print_elf64_hdr(Elf64Hdr::new(&mapped_file)),
+                    "phdr" => print_elf64_phdr(Elf64Hdr::new(&mapped_file), &mapped_file),
+                    _ => eprintln!("引数のflagsの処理ミスってますよ、"),
+                }
+            },
             _ => println!("Wrong format"),
         }
     }
