@@ -8,6 +8,18 @@ cargo install --git https://github.com/d4wnin9/elfinfo.git --branch=main
 
 ## Usage
 ```sh
-elfinfo [flag] <filename>
+elfinfo [FLAGS] <filename>
 ```
 今はまだheaderのみ
+
+## Flags
+```sh
+    --help           Prints help information
+-h, --file-header    display header
+-V, --version        Prints version information
+```
+
+## Args
+```sh
+<filename>    filename
+```
