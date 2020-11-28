@@ -1,5 +1,7 @@
 use crate::*;
 use std::usize;
+use std::vec::Vec;
+use prettytable::Table;
 
 
 // elf64 header
@@ -181,15 +183,26 @@ pub fn print_elf64_hdr(hdr: Elf64Hdr) {
 
 pub fn print_elf64_phdr(hdr: Elf64Hdr, bin: &[u8]) {
     let e_phoff = usize::from_str_radix(&elf64_phoff(hdr.e_phoff), 16).unwrap();
-    let phdr = Elf64Phdr::new(&bin, e_phoff);
+    let e_phnum = usize::from_str_radix(&elf_phnum(hdr.e_phnum), 16).unwrap();
+    let mut phdr_vec = Vec::new();
+    for offset in 0..e_phnum {
+        phdr_vec.push(Elf64Phdr::new(&bin, e_phoff + 56*offset));
+    }
 
-    // phdrを読めるようにした。
-    // phdrはe_phnum個連続しているので、順番にそれを読み取る
-
-
-
-    println!("ELF Program Header:");
-    println!("  Type:                              {}", elf_type(hdr.e_type));
-    println!("  Entry point address:               0x{}", elf64_entry(hdr.e_entry));
-    println!("  Start of program headers:          0x{} (bytes into file)", elf64_phoff(hdr.e_phoff));
+    /* print program header */
+    let mut phdr_table = Table::new();
+    phdr_table.add_row(row!["Type", "Offset", "VirtAddr", "PhysAddr", "FileSiz", "MemSiz", "Flags", "Align"]);
+    for phdr in phdr_vec.iter() {
+        phdr_table.add_row(row![
+            phdr_type(phdr.p_type),
+            format!("{}{}", "0x".to_string(), phdr_offset(phdr.p_offset)),
+            format!("{}{}", "0x".to_string(), phdr_vaddr(phdr.p_vaddr)),
+            format!("{}{}", "0x".to_string(), phdr_paddr(phdr.p_paddr)),
+            format!("{}{}", "0x".to_string(), phdr_filesz(phdr.p_filesz)),
+            format!("{}{}", "0x".to_string(), phdr_memsz(phdr.p_memsz)),
+            phdr_flags(phdr.p_flags),
+            format!("{}{}", "0x".to_string(), phdr_align(phdr.p_align)),
+        ]);
+    }
+    phdr_table.printstd();
 }

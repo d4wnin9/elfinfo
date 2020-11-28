@@ -1,4 +1,6 @@
 extern crate memmap;
+#[macro_use]
+extern crate prettytable;
 
 use std::error::Error;
 use std::fs::File;

@@ -53,6 +53,30 @@ const ET_HIPROC: [u8; 2] = [0xff, 0xff];
 const EM_X86_64: [u8; 2] = [0x3e, 0x00];
 const EM_AARCH_64: [u8; 2] = [0xb7, 0x00];
 
+/* RWX Flagの管理どうしたら... */
+const PF_X: [u8; 4] = [0x01, 0x00, 0x00, 0x00];
+const PF_W: [u8; 4] = [0x02, 0x00, 0x00, 0x00];
+const PF_WX: [u8; 4] = [0x03, 0x00, 0x00, 0x00];
+const PF_R: [u8; 4] = [0x04, 0x00, 0x00, 0x00];
+const PF_RX: [u8; 4] = [0x05, 0x00, 0x00, 0x00];
+const PF_RW: [u8; 4] = [0x06, 0x00, 0x00, 0x00];
+const PF_RWX: [u8; 4] = [0x07, 0x00, 0x00, 0x00];
+
+/* Program Type */
+const PT_NULL: [u8; 4] = [0x00, 0x00, 0x00, 0x00];
+const PT_LOAD: [u8; 4] = [0x01, 0x00, 0x00, 0x00];
+const PT_DYNAMIC: [u8; 4] = [0x02, 0x00, 0x00, 0x00];
+const PT_INTERP: [u8; 4] = [0x03, 0x00, 0x00, 0x00];
+const PT_NOTE: [u8; 4] = [0x04, 0x00, 0x00, 0x00];
+const PT_SHLIB: [u8; 4] = [0x05, 0x00, 0x00, 0x00];
+const PT_PHDR: [u8; 4] = [0x06, 0x00, 0x00, 0x00];
+const PT_LOPROC: [u8; 4] = [0x07, 0x00, 0x00, 0x00];
+const PT_HIPROC: [u8; 4] = [0x08, 0x00, 0x00, 0x00];
+const PT_GNU_EH_FRAME: [u8; 4] = [0x50, 0xe5, 0x74, 0x64];
+const PT_GNU_STACK: [u8; 4] = [0x51, 0xe5, 0x74, 0x64];
+const PT_GNU_RELRO: [u8; 4] = [0x52, 0xe5, 0x74, 0x64];
+const PT_GNU_PROPERTY: [u8; 4] = [0x53, 0xe5, 0x74, 0x64];
+
 
 pub fn is_elf(e_ident: [u8; 16]) -> bool {
     e_ident[EI_MAG0..EI_MAG3+1] == [ELFMAG0, ELFMAG1, ELFMAG2, ELFMAG3]
@@ -197,4 +221,81 @@ pub fn elf_shnum(e_shnum: Elf64Half) -> String {
 
 pub fn elf_shstrndx(e_shstrndx: Elf64Half) -> String {
     e_shstrndx.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
+}
+
+
+pub fn phdr_type(p_type: Elf64Word) -> String {
+    if p_type == PT_NULL {
+        "NULL".to_string()
+    } else if p_type == PT_LOAD {
+        "LOAD".to_string()
+    } else if p_type == PT_DYNAMIC {
+        "DYNAMIC".to_string()
+    } else if p_type == PT_INTERP {
+        "INTERP".to_string()
+    } else if p_type == PT_NOTE {
+        "NOTE".to_string()
+    } else if p_type == PT_SHLIB {
+        "SHLIB".to_string()
+    } else if p_type == PT_PHDR {
+        "PHDR".to_string()
+    } else if p_type == PT_LOPROC {
+        "LOPROC".to_string()
+    } else if p_type == PT_HIPROC {
+        "HIPROC".to_string()
+    } else if p_type == PT_GNU_EH_FRAME {
+        "FRAME".to_string()
+    } else if p_type == PT_GNU_STACK {
+        "GNU_STACK".to_string()
+    } else if p_type == PT_GNU_RELRO {
+        "GNU_RELRO".to_string()
+    } else if p_type == PT_GNU_PROPERTY {
+        "GNU_PROPERTY".to_string()
+    } else {
+        "Unknown".to_string()
+    }
+}
+
+pub fn phdr_flags(p_flags: Elf64Word) -> String {
+    if p_flags == PF_X {
+        "X".to_string()
+    } else if p_flags == PF_W {
+        "W".to_string()
+    } else if p_flags == PF_WX {
+        "WX".to_string()
+    } else if p_flags == PF_R {
+        "R".to_string()
+    } else if p_flags == PF_RX {
+        "RX".to_string()
+    } else if p_flags == PF_RW {
+        "RW".to_string()
+    } else if p_flags == PF_RWX {
+        "RWX".to_string()
+    } else {
+        "Unknown".to_string()
+    }
+}
+
+pub fn phdr_offset(p_offset: Elf64Off) -> String {
+    p_offset.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
+}
+
+pub fn phdr_vaddr(p_vaddr: Elf64Addr) -> String {
+    p_vaddr.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
+}
+
+pub fn phdr_paddr(p_paddr: Elf64Addr) -> String {
+    p_paddr.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
+}
+
+pub fn phdr_filesz(p_filesz: Elf64Xword) -> String {
+    p_filesz.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
+}
+
+pub fn phdr_memsz(p_memsz: Elf64Xword) -> String {
+    p_memsz.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
+}
+
+pub fn phdr_align(p_align: Elf64Xword) -> String {
+    p_align.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
 }
