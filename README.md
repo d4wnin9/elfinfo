@@ -14,12 +14,14 @@ elfinfo [FLAGS] <filename>
 
 ## Flags
 ```sh
-    --help           Prints help information
--h, --file-header    display header
--V, --version        Prints version information
+    --help               Prints help information
+-h, --file-header        Display the ELF file header
+-l, --program-headers    Display the program headers
+-V, --version            Prints version information
+
 ```
 
 ## Args
 ```sh
-<filename>    filename
+<filename>    file name
 ```
