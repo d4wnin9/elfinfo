@@ -53,6 +53,7 @@ pub fn run(filename: &str, flag: &str) -> Result<(), Box<dyn Error>>{
             "ELF32" => {
                 match flag {
                     "hdr" => print_elf32_hdr(Elf32Hdr::new(&mapped_file)),
+                    "phdr" => print_elf32_phdr(Elf32Hdr::new(&mapped_file), &mapped_file),
                     _ => eprintln!("引数のflagsの処理ミスってますよ、"),
                 }
             },

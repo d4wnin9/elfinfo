@@ -4,7 +4,7 @@ use std::vec::Vec;
 use prettytable::Table;
 
 
-// elf64 header
+/* elf64 header */
 pub struct Elf64Hdr {
     pub e_ident: [u8; 16],
     pub e_type: Elf64Half,
@@ -99,7 +99,7 @@ impl Elf64Hdr {
     }
 }
 
-// elf64 program header
+/* elf64 program header */
 pub struct Elf64Phdr {
     pub p_type: Elf64Word,
     pub p_flags: Elf64Word,
@@ -159,7 +159,7 @@ impl Elf64Phdr {
 }
 
 
-// elf64 header preview
+/* elf64 header preview */
 pub fn print_elf64_hdr(hdr: Elf64Hdr) {
     println!("ELF Header:");
     println!("  Magic:   {}", ei_magic(hdr.e_ident));
@@ -195,13 +195,13 @@ pub fn print_elf64_phdr(hdr: Elf64Hdr, bin: &[u8]) {
     for phdr in phdr_vec.iter() {
         phdr_table.add_row(row![
             phdr_type(phdr.p_type),
-            format!("{}{}", "0x".to_string(), phdr_offset(phdr.p_offset)),
-            format!("{}{}", "0x".to_string(), phdr_vaddr(phdr.p_vaddr)),
-            format!("{}{}", "0x".to_string(), phdr_paddr(phdr.p_paddr)),
-            format!("{}{}", "0x".to_string(), phdr_filesz(phdr.p_filesz)),
-            format!("{}{}", "0x".to_string(), phdr_memsz(phdr.p_memsz)),
+            format!("{}{}", "0x".to_string(), phdr64_offset(phdr.p_offset)),
+            format!("{}{}", "0x".to_string(), phdr64_vaddr(phdr.p_vaddr)),
+            format!("{}{}", "0x".to_string(), phdr64_paddr(phdr.p_paddr)),
+            format!("{}{}", "0x".to_string(), phdr64_filesz(phdr.p_filesz)),
+            format!("{}{}", "0x".to_string(), phdr64_memsz(phdr.p_memsz)),
             phdr_flags(phdr.p_flags),
-            format!("{}{}", "0x".to_string(), phdr_align(phdr.p_align)),
+            format!("{}{}", "0x".to_string(), phdr64_align(phdr.p_align)),
         ]);
     }
     phdr_table.printstd();

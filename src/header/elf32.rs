@@ -1,7 +1,10 @@
 use crate::*;
+use std::usize;
+use std::vec::Vec;
+use prettytable::Table;
 
 
-// elf32 header
+/* elf32 header */
 pub struct Elf32Hdr {
     pub e_ident: [u8; 16],
     pub e_type: Elf32Half,
@@ -96,7 +99,7 @@ impl Elf32Hdr {
     }
 }
 
-// elf32 program header
+/* elf32 program header */
 pub struct Elf32Phdr {
     pub p_type: Elf32Word,
     pub p_offset: Elf32Off,
@@ -108,9 +111,55 @@ pub struct Elf32Phdr {
     pub p_align: Elf32Word,
 }
 
+impl Elf32Phdr {
+    pub fn new(bin: &[u8], e_phoff: usize) -> Elf32Phdr {
+        let mut p_type: Elf32Word = [0; 4];
+        for (i, b) in bin[e_phoff..e_phoff+4].iter().enumerate() {
+            p_type[i] = *b;
+        }
+        let mut p_offset: Elf32Off = [0; 4];
+        for (i, b) in bin[e_phoff+4..e_phoff+8].iter().enumerate() {
+            p_offset[i] = *b;
+        }
+        let mut p_vaddr: Elf32Addr= [0; 4];
+        for (i, b) in bin[e_phoff+8..e_phoff+12].iter().enumerate() {
+            p_vaddr[i] = *b;
+        }
+        let mut p_paddr: Elf32Addr = [0; 4];
+        for (i, b) in bin[e_phoff+12..e_phoff+16].iter().enumerate() {
+            p_paddr[i] = *b;
+        }
+        let mut p_filesz: Elf32Word = [0; 4];
+        for (i, b) in bin[e_phoff+16..e_phoff+20].iter().enumerate() {
+            p_filesz[i] = *b;
+        }
+        let mut p_memsz: Elf32Word = [0; 4];
+        for (i, b) in bin[e_phoff+20..e_phoff+24].iter().enumerate() {
+            p_memsz[i] = *b;
+        }
+        let mut p_flags: Elf32Word = [0; 4];
+        for (i, b) in bin[e_phoff+24..e_phoff+28].iter().enumerate() {
+            p_flags[i] = *b;
+        }
+        let mut p_align: Elf32Word = [0; 4];
+        for (i, b) in bin[e_phoff+28..e_phoff+32].iter().enumerate() {
+            p_align[i] = *b;
+        }
+        Elf32Phdr {
+            p_type,
+            p_offset,
+            p_vaddr,
+            p_paddr,
+            p_filesz,
+            p_memsz,
+            p_flags,
+            p_align,
+        }
+    }
+}
 
 
-// elf32 header preview
+/* elf32 header preview */
 pub fn print_elf32_hdr(hdr: Elf32Hdr) {
     println!("ELF Header:");
     println!("  Magic:   {}", ei_magic(hdr.e_ident));
@@ -130,4 +179,30 @@ pub fn print_elf32_hdr(hdr: Elf32Hdr) {
     println!("  Size of section headers:           0x{} (bytes)", elf_shsize(hdr.e_shsize));
     println!("  Number of section headers:         0x{}", elf_shnum(hdr.e_shnum));
     println!("  Section header string table index: 0x{}", elf_shstrndx(hdr.e_shstrndx));
+}
+
+pub fn print_elf32_phdr(hdr: Elf32Hdr, bin: &[u8]) {
+    let e_phoff = usize::from_str_radix(&elf32_phoff(hdr.e_phoff), 16).unwrap();
+    let e_phnum = usize::from_str_radix(&elf_phnum(hdr.e_phnum), 16).unwrap();
+    let mut phdr_vec = Vec::new();
+    for offset in 0..e_phnum {
+        phdr_vec.push(Elf32Phdr::new(&bin, e_phoff + 32*offset));
+    }
+
+    /* print program header */
+    let mut phdr_table = Table::new();
+    phdr_table.add_row(row!["Type", "Offset", "VirtAddr", "PhysAddr", "FileSiz", "MemSiz", "Flags", "Align"]);
+    for phdr in phdr_vec.iter() {
+        phdr_table.add_row(row![
+            phdr_type(phdr.p_type),
+            format!("{}{}", "0x".to_string(), phdr32_offset(phdr.p_offset)),
+            format!("{}{}", "0x".to_string(), phdr32_vaddr(phdr.p_vaddr)),
+            format!("{}{}", "0x".to_string(), phdr32_paddr(phdr.p_paddr)),
+            format!("{}{}", "0x".to_string(), phdr32_filesz(phdr.p_filesz)),
+            format!("{}{}", "0x".to_string(), phdr32_memsz(phdr.p_memsz)),
+            phdr_flags(phdr.p_flags),
+            format!("{}{}", "0x".to_string(), phdr32_align(phdr.p_align)),
+        ]);
+    }
+    phdr_table.printstd();
 }

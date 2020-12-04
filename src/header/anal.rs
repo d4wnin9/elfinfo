@@ -36,6 +36,8 @@ const EV_NUM: u8 = 0x02;
 
 /* e_machine */
 const ELFOSABI_NONE: u8 = 0x00;
+// const ELFOSABI_HPUX: u8 = 0x01;
+// const ELFOSABI_NETBSD: u8 = 0x02;
 const ELFOSABI_LINUX: u8 = 0x03;
 
 /* These constants define the different elf file types */
@@ -50,6 +52,14 @@ const ET_LOPROC: [u8; 2] = [0x00, 0xff];
 const ET_HIPROC: [u8; 2] = [0xff, 0xff];
 
 /* Machine list */
+// const EM_NONE: [u8; 2] = [0x00, 0x00];
+// const EM_M32: [u8; 2] = [0x01, 0x00];
+// const EM_SPARC: [u8; 2] = [0x02, 0x00];
+// const EM_386: [u8; 2] = [0x03, 0x00];
+// const EM_68K: [u8; 2] = [0x04, 0x00];
+// const EM_88K: [u8; 2] = [0x05, 0x00];
+// resrved: [u8; 2] = [0x06, 0x00];  // reserved for future use (was EM_486)
+// const EM_860: [u8; 2] = [0x07, 0x00];
 const EM_X86_64: [u8; 2] = [0x3e, 0x00];
 const EM_AARCH_64: [u8; 2] = [0xb7, 0x00];
 
@@ -276,26 +286,50 @@ pub fn phdr_flags(p_flags: Elf64Word) -> String {
     }
 }
 
-pub fn phdr_offset(p_offset: Elf64Off) -> String {
+pub fn phdr32_offset(p_offset: Elf32Off) -> String {
     p_offset.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
 }
 
-pub fn phdr_vaddr(p_vaddr: Elf64Addr) -> String {
+pub fn phdr64_offset(p_offset: Elf64Off) -> String {
+    p_offset.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
+}
+
+pub fn phdr32_vaddr(p_vaddr: Elf32Addr) -> String {
     p_vaddr.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
 }
 
-pub fn phdr_paddr(p_paddr: Elf64Addr) -> String {
+pub fn phdr64_vaddr(p_vaddr: Elf64Addr) -> String {
+    p_vaddr.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
+}
+
+pub fn phdr32_paddr(p_paddr: Elf32Addr) -> String {
     p_paddr.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
 }
 
-pub fn phdr_filesz(p_filesz: Elf64Xword) -> String {
+pub fn phdr64_paddr(p_paddr: Elf64Addr) -> String {
+    p_paddr.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
+}
+
+pub fn phdr32_filesz(p_filesz: Elf32Word) -> String {
     p_filesz.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
 }
 
-pub fn phdr_memsz(p_memsz: Elf64Xword) -> String {
+pub fn phdr64_filesz(p_filesz: Elf64Xword) -> String {
+    p_filesz.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
+}
+
+pub fn phdr32_memsz(p_memsz: Elf32Word) -> String {
     p_memsz.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
 }
 
-pub fn phdr_align(p_align: Elf64Xword) -> String {
+pub fn phdr64_memsz(p_memsz: Elf64Xword) -> String {
+    p_memsz.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
+}
+
+pub fn phdr32_align(p_align: Elf32Word) -> String {
+    p_align.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
+}
+
+pub fn phdr64_align(p_align: Elf64Xword) -> String {
     p_align.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
 }
