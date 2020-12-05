@@ -125,7 +125,7 @@ impl Elf64Phdr {
         for (i, b) in bin[e_phoff+8..e_phoff+16].iter().enumerate() {
             p_offset[i] = *b;
         }
-        let mut p_vaddr: Elf64Addr= [0; 8];
+        let mut p_vaddr: Elf64Addr = [0; 8];
         for (i, b) in bin[e_phoff+16..e_phoff+24].iter().enumerate() {
             p_vaddr[i] = *b;
         }
@@ -154,6 +154,76 @@ impl Elf64Phdr {
             p_filesz,
             p_memsz,
             p_align,
+        }
+    }
+}
+
+pub struct Elf64Shdr {
+    pub sh_name: Elf64Word,
+    pub sh_type: Elf64Word,
+    pub sh_flags: Elf64Xword,
+    pub sh_addr: Elf64Addr,
+    pub sh_offset: Elf64Off,
+    pub sh_size: Elf64Xword,
+    pub sh_link: Elf64Word,
+    pub sh_info: Elf64Word,
+    pub sh_addralign: Elf64Xword,
+    pub sh_entsize: Elf64Xword,
+}
+
+impl Elf64Shdr {
+    pub fn new(bin: &[u8], e_shoff: usize) -> Elf64Shdr {
+        let mut sh_name: Elf64Word = [0; 4];
+        for (i, b) in bin[e_shoff..e_shoff+4].iter().enumerate() {
+            sh_name[i] = *b;
+        }
+        let mut sh_type: Elf64Word = [0; 4];
+        for (i, b) in bin[e_shoff+4..e_shoff+8].iter().enumerate() {
+            sh_type[i] = *b;
+        }
+        let mut sh_flags: Elf64Xword = [0; 8];
+        for (i, b) in bin[e_shoff+8..e_shoff+16].iter().enumerate() {
+            sh_flags[i] = *b;
+        }
+        let mut sh_addr: Elf64Addr = [0; 8];
+        for (i, b) in bin[e_shoff+16..e_shoff+24].iter().enumerate() {
+            sh_addr[i] = *b;
+        }
+        let mut sh_offset: Elf64Off = [0; 8];
+        for (i, b) in bin[e_shoff+24..e_shoff+32].iter().enumerate() {
+            sh_offset[i] = *b;
+        }
+        let mut sh_size: Elf64Xword = [0; 8];
+        for (i, b) in bin[e_shoff+32..e_shoff+40].iter().enumerate() {
+            sh_size[i] = *b;
+        }
+        let mut sh_link: Elf64Word = [0; 4];
+        for (i, b) in bin[e_shoff+40..e_shoff+44].iter().enumerate() {
+            sh_link[i] = *b;
+        }
+        let mut sh_info: Elf64Word = [0; 4];
+        for (i, b) in bin[e_shoff+44..e_shoff+48].iter().enumerate() {
+            sh_info[i] = *b;
+        }
+        let mut sh_addralign: Elf64Xword = [0; 8];
+        for (i, b) in bin[e_shoff+48..e_shoff+56].iter().enumerate() {
+            sh_addralign[i] = *b;
+        }
+        let mut sh_entsize: Elf64Xword = [0; 8];
+        for (i, b) in bin[e_shoff+56..e_shoff+64].iter().enumerate() {
+            sh_entsize[i] = *b;
+        }
+        Elf64Shdr {
+            sh_name,
+            sh_type,
+            sh_flags,
+            sh_addr,
+            sh_offset,
+            sh_size,
+            sh_link,
+            sh_info,
+            sh_addralign,
+            sh_entsize,
         }
     }
 }
@@ -205,4 +275,33 @@ pub fn print_elf64_phdr(hdr: Elf64Hdr, bin: &[u8]) {
         ]);
     }
     phdr_table.printstd();
+}
+
+pub fn print_elf64_shdr(hdr: Elf64Hdr, bin: &[u8]) {
+    let e_shoff = usize::from_str_radix(&elf64_shoff(hdr.e_shoff), 16).unwrap();
+    let e_shnum = usize::from_str_radix(&elf_shnum(hdr.e_shnum), 16).unwrap();
+    let mut shdr_vec = Vec::new();
+    for offset in 0..e_shnum {
+        shdr_vec.push(Elf64Shdr::new(&bin, e_shoff + 64*offset));
+    }
+
+
+    /* print section header */
+    let mut shdr_table = Table::new();
+    shdr_table.add_row(row!["Name", "Type", "Address", "Offset", "Size", "EntSize", "Flags", "Link", "Info", "Align"]);
+    for shdr in shdr_vec.iter() {
+        shdr_table.add_row(row![
+            format!("{:?}", shdr64_name(shdr.sh_name, &shdr_vec, hdr.e_shstrndx, &bin)),
+            shdr64_type(shdr.sh_type),
+            format!("{}{}", "0x", shdr64_addr(shdr.sh_addr)),
+            format!("{}{}", "0x", shdr64_offset(shdr.sh_offset)),
+            format!("{}{}", "0x", shdr64_size(shdr.sh_size)),
+            format!("{}{}", "0x", shdr64_entsize(shdr.sh_entsize)),
+            shdr64_flags(shdr.sh_flags),
+            format!("{}{}", "0x", shdr64_link(shdr.sh_link)),
+            format!("{}{}", "0x", shdr64_info(shdr.sh_info)),
+            format!("{}{}", "0x", shdr64_addralign(shdr.sh_addralign)),
+        ]);
+    }
+    shdr_table.printstd();
 }

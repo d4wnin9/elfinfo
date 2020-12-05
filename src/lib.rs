@@ -61,6 +61,7 @@ pub fn run(filename: &str, flag: &str) -> Result<(), Box<dyn Error>>{
                 match flag {
                     "hdr" => print_elf64_hdr(Elf64Hdr::new(&mapped_file)),
                     "phdr" => print_elf64_phdr(Elf64Hdr::new(&mapped_file), &mapped_file),
+                    "shdr" => print_elf64_shdr(Elf64Hdr::new(&mapped_file), &mapped_file),
                     _ => eprintln!("引数のflagsの処理ミスってますよ、"),
                 }
             },

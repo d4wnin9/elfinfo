@@ -1,5 +1,6 @@
 use crate::*;
-
+use std::usize;
+use std::vec::Vec;
 
 /* e_ident[] indexes */
 const EI_MAG0: usize = 0;
@@ -86,6 +87,51 @@ const PT_GNU_EH_FRAME: [u8; 4] = [0x50, 0xe5, 0x74, 0x64];
 const PT_GNU_STACK: [u8; 4] = [0x51, 0xe5, 0x74, 0x64];
 const PT_GNU_RELRO: [u8; 4] = [0x52, 0xe5, 0x74, 0x64];
 const PT_GNU_PROPERTY: [u8; 4] = [0x53, 0xe5, 0x74, 0x64];
+
+/* sh_type */
+const SHT_NULL : [u8; 4] = [0x00, 0x00, 0x00, 0x00];
+const SHT_PROGBITS : [u8; 4] = [0x01, 0x00, 0x00, 0x00];
+const SHT_SYMTAB : [u8; 4] = [0x02, 0x00, 0x00, 0x00];
+const SHT_STRTAB : [u8; 4] = [0x03, 0x00, 0x00, 0x00];
+const SHT_RELA : [u8; 4] = [0x04, 0x00, 0x00, 0x00];
+const SHT_HASH : [u8; 4] = [0x05, 0x00, 0x00, 0x00];
+const SHT_DYNAMIC : [u8; 4] = [0x06, 0x00, 0x00, 0x00];
+const SHT_NOTE : [u8; 4] = [0x07, 0x00, 0x00, 0x00];
+const SHT_NOBITS : [u8; 4] = [0x08, 0x00, 0x00, 0x00];
+const SHT_REL : [u8; 4] = [0x09, 0x00, 0x00, 0x00];
+const SHT_SHLIB : [u8; 4] = [0x0a, 0x00, 0x00, 0x00];
+const SHT_DYNSYM : [u8; 4] = [0x0b, 0x00, 0x00, 0x00];
+const SHT_NUM : [u8; 4] = [0x0c, 0x00, 0x00, 0x00];
+const SHT_INIT_ARRAY: [u8; 4] = [0x0e, 0x00, 0x00, 0x00];
+const SHT_FINI_ARRAY: [u8; 4] = [0x0f, 0x00, 0x00, 0x00];
+const SHT_PREINIT_ARRAY: [u8; 4] = [0x10, 0x00, 0x00, 0x00];
+const SHT_GNU_HASH: [u8; 4] = [0xf6, 0xff, 0xff, 0x6f];
+const SHT_GNU_VERNNED: [u8; 4] = [0xfe, 0xff, 0xff, 0x6f];
+const SHT_GNU_VERSYM: [u8; 4] = [0xff, 0xff, 0xff, 0x6f];
+const SHT_LOPROC : [u8; 4] = [0x00, 0x00, 0x00, 0x70];
+const SHT_HIPROC : [u8; 4] = [0xff, 0xff, 0xff, 0x7f];
+const SHT_LOUSER : [u8; 4] = [0x00, 0x00, 0x00, 0x80];
+const SHT_HIUSER : [u8; 4] = [0xff, 0xff, 0xff, 0xff];
+
+/* sh_flags */
+const SHF_WRITE: [u8; 8] = [0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
+const SHF_ALLOC: [u8; 8] = [0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
+const SHF_WA: [u8; 8] = [0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
+const SHF_EXECINSTR: [u8; 8] = [0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
+const SHF_WX: [u8; 8] = [0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
+const SHF_AX: [u8; 8] = [0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
+const SHF_WAX: [u8; 8] = [0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
+const SHF_MS: [u8; 8] = [0x30, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
+
+/* special section indexes */
+// const SHN_UNDEF : [u8; 2] = [0x00, 0x00];
+// const SHN_LORESERVE : [u8; 2] = [0x00, 0xff];
+// const SHN_LOPROC : [u8; 2] = [0x00, 0xff];
+// const SHN_HIPROC : [u8; 2] = [0x1f, 0xff];
+// const SHN_LIVEPATCH : [u8; 2] = [0x20, 0xff];
+// const SHN_ABS : [u8; 2] = [0xf1, 0xff];
+// const SHN_COMMON : [u8; 2] = [0xf2, 0xff];
+// const SHN_HIRESERVE : [u8; 2] = [0xff, 0xff];
 
 
 pub fn is_elf(e_ident: [u8; 16]) -> bool {
@@ -332,4 +378,132 @@ pub fn phdr32_align(p_align: Elf32Word) -> String {
 
 pub fn phdr64_align(p_align: Elf64Xword) -> String {
     p_align.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
+}
+
+
+pub fn shdr64_name(sh_name: Elf64Word, shdr_arr: &[Elf64Shdr], e_shstrndx: Elf64Half, bin: &[u8]) -> String {
+    /* e_shstrndx番目のshtのOffsetからSize分がshstrtableの範囲 */
+    let shstrtable_offset = usize::from_str_radix(&shdr_arr[usize::from_str_radix(&elf_shstrndx(e_shstrndx), 16).unwrap()].sh_offset
+        .iter().rev().map(|n| format!("{:02x}", n)).collect::<String>(), 16).unwrap();
+    let shstrtable_size = usize::from_str_radix(&shdr_arr[usize::from_str_radix(&elf_shstrndx(e_shstrndx), 16).unwrap()].sh_size
+        .iter().rev().map(|n| format!("{:02x}", n)).collect::<String>(), 16).unwrap();
+
+    /* shstrtableを抜き出す */
+    let mut shstrtable_vec = Vec::new();
+    for chr in bin[shstrtable_offset..shstrtable_offset+shstrtable_size].iter() {
+        shstrtable_vec.push(chr);
+    }
+    /* sh_nameをshstrtableから抜き出してくる */
+    let mut sh_name_vec = Vec::new();
+    for chr in shstrtable_vec[usize::from_str_radix(&sh_name.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>(), 16).unwrap()..].iter() {
+        /* amazing magic && */
+        if chr == &&0x00 {
+            break;
+        }
+        sh_name_vec.push(chr);
+    }
+    /* sh_name_vecをstringにしてる */
+    sh_name_vec.iter().map(|&s| **s as char).collect::<String>()
+}
+
+pub fn shdr64_type(sh_type: Elf64Word) -> String {
+    if sh_type == SHT_NULL {
+        "NULL".to_string()
+    } else if sh_type == SHT_PROGBITS {
+        "PROGBITS".to_string()
+    } else if sh_type == SHT_SYMTAB {
+        "SYMTAB".to_string()
+    } else if sh_type == SHT_STRTAB {
+        "STRTAB".to_string()
+    } else if sh_type == SHT_RELA {
+        "RELA".to_string()
+    } else if sh_type == SHT_HASH {
+        "HASH".to_string()
+    } else if sh_type == SHT_DYNAMIC {
+        "DYNAMIC".to_string()
+    } else if sh_type == SHT_NOTE {
+        "NOTE".to_string()
+    } else if sh_type == SHT_NOBITS {
+        "NOBITS".to_string()
+    } else if sh_type == SHT_REL {
+        "REL".to_string()
+    } else if sh_type == SHT_SHLIB {
+        "SHLIB".to_string()
+    } else if sh_type == SHT_DYNSYM {
+        "SYNSYM".to_string()
+    } else if sh_type == SHT_NUM {
+        "NUM".to_string()
+    } else if sh_type == SHT_INIT_ARRAY {
+        "INIT_ARRAY".to_string()
+    } else if sh_type == SHT_FINI_ARRAY {
+        "FINI_ARRAY".to_string()
+    } else if sh_type == SHT_PREINIT_ARRAY {
+        "PREINIT_ARRAY".to_string()
+    } else if sh_type == SHT_GNU_HASH {
+        "GNU_HASH".to_string()
+    } else if sh_type == SHT_GNU_VERNNED {
+        "GNU_VERNNED".to_string()
+    } else if sh_type == SHT_GNU_VERSYM {
+        "GNU_VERSYM".to_string()
+    } else if sh_type == SHT_LOPROC {
+        "LOPROC".to_string()
+    } else if sh_type == SHT_HIPROC {
+        "HIPROC".to_string()
+    } else if sh_type == SHT_LOUSER {
+        "LOUSER".to_string()
+    } else if sh_type == SHT_HIUSER {
+        "HIUSER".to_string()
+    } else {
+        "Unknown".to_string()
+    }
+}
+
+pub fn shdr64_flags(sh_flags: Elf64Xword) -> String {
+    if sh_flags == SHF_WRITE {
+        "W".to_string()
+    } else if sh_flags == SHF_ALLOC {
+        "A".to_string()
+    } else if sh_flags == SHF_WA {
+        "WA".to_string()
+    } else if sh_flags == SHF_EXECINSTR {
+        "X".to_string()
+    } else if sh_flags == SHF_WX {
+        "WX".to_string()
+    } else if sh_flags == SHF_AX {
+        "AX".to_string()
+    } else if sh_flags == SHF_WAX {
+        "WAX".to_string()
+    } else if sh_flags == SHF_MS {
+        "MS".to_string()
+    } else {
+        "N/A".to_string()
+    }
+}
+
+pub fn shdr64_addr(sh_addr: Elf64Addr) -> String {
+    sh_addr.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
+}
+
+pub fn shdr64_offset(sh_offset: Elf64Off) -> String {
+    sh_offset.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
+}
+
+pub fn shdr64_size(sh_size: Elf64Xword) -> String {
+    sh_size.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
+}
+
+pub fn shdr64_link(sh_link: Elf64Word) -> String {
+    sh_link.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
+}
+
+pub fn shdr64_info(sh_info: Elf64Word) -> String {
+    sh_info.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
+}
+
+pub fn shdr64_addralign(sh_addralign: Elf64Xword) -> String {
+    sh_addralign.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
+}
+
+pub fn shdr64_entsize(sh_entsize: Elf64Xword) -> String {
+    sh_entsize.iter().rev().map(|n| format!("{:02x}", n)).collect::<String>()
 }

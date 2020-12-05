@@ -23,6 +23,12 @@ fn main() {
             .long("program-headers")
         )
 
+        .arg(Arg::with_name("shdr")
+            .help("Display the sections' header")
+            .short("S")
+            .long("section-headers")
+        )
+
         .arg(Arg::with_name("filename")
             .help("file name")
             .required(true)
@@ -38,6 +44,10 @@ fn main() {
         };
     } else if args.is_present("phdr") {
         if let Err(e) = elfinfo::run(filename, "phdr") {
+            eprintln!("Application Error: {}", e);
+        };
+    } else if args.is_present("shdr") {
+        if let Err(e) = elfinfo::run(filename, "shdr") {
             eprintln!("Application Error: {}", e);
         };
     } else {
