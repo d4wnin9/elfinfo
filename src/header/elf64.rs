@@ -291,7 +291,7 @@ pub fn print_elf64_shdr(hdr: Elf64Hdr, bin: &[u8]) {
     shdr_table.add_row(row!["Name", "Type", "Address", "Offset", "Size", "EntSize", "Flags", "Link", "Info", "Align"]);
     for shdr in shdr_vec.iter() {
         shdr_table.add_row(row![
-            format!("{:?}", shdr64_name(shdr.sh_name, &shdr_vec, hdr.e_shstrndx, &bin)),
+            format!("{}", shdr64_name(shdr.sh_name, &shdr_vec, hdr.e_shstrndx, &bin)),
             shdr64_type(shdr.sh_type),
             format!("{}{}", "0x", shdr64_addr(shdr.sh_addr)),
             format!("{}{}", "0x", shdr64_offset(shdr.sh_offset)),
