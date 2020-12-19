@@ -21,12 +21,21 @@ fn main() {
             .help("Display the program headers")
             .short("l")
             .long("program-headers")
+            .alias("segments")
         )
 
         .arg(Arg::with_name("shdr")
             .help("Display the sections' header")
             .short("S")
             .long("section-headers")
+            .alias("sections")
+        )
+
+        .arg(Arg::with_name("sym")
+            .help("Display the symbol table")
+            .short("s")
+            .long("syms")
+            .alias("symbols")
         )
 
         .arg(Arg::with_name("filename")
@@ -48,6 +57,10 @@ fn main() {
         };
     } else if args.is_present("shdr") {
         if let Err(e) = elfinfo::run(filename, "shdr") {
+            eprintln!("Application Error: {}", e);
+        };
+    } else if args.is_present("sym") {
+        if let Err(e) = elfinfo::run(filename, "sym") {
             eprintln!("Application Error: {}", e);
         };
     } else {

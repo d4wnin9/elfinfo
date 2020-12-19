@@ -160,7 +160,8 @@ impl Elf32Phdr {
 
 
 /* elf32 header preview */
-pub fn print_elf32_hdr(hdr: Elf32Hdr) {
+pub fn print_elf32_hdr(bin: &[u8]) {
+    let hdr = Elf32Hdr::new(&bin);
     println!("ELF Header:");
     println!("  Magic:   {}", ei_magic(hdr.e_ident));
     println!("  Class:                             {}", ei_class(hdr.e_ident));
@@ -181,7 +182,8 @@ pub fn print_elf32_hdr(hdr: Elf32Hdr) {
     println!("  Section header string table index: 0x{}", elf_shstrndx(hdr.e_shstrndx));
 }
 
-pub fn print_elf32_phdr(hdr: Elf32Hdr, bin: &[u8]) {
+pub fn print_elf32_phdr(bin: &[u8]) {
+    let hdr = Elf32Hdr::new(&bin);
     let e_phoff = usize::from_str_radix(&elf32_phoff(hdr.e_phoff), 16).unwrap();
     let e_phnum = usize::from_str_radix(&elf_phnum(hdr.e_phnum), 16).unwrap();
     let mut phdr_vec = Vec::new();

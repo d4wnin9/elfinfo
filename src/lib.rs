@@ -8,6 +8,8 @@ use memmap::Mmap;
 
 mod header;
 use header::*;
+mod symbol;
+use symbol::*;
 
 
 /* Type for a 16-bit quantity. */
@@ -52,16 +54,17 @@ pub fn run(filename: &str, flag: &str) -> Result<(), Box<dyn Error>>{
             "?" => println!("I don't know"),
             "ELF32" => {
                 match flag {
-                    "hdr" => print_elf32_hdr(Elf32Hdr::new(&mapped_file)),
-                    "phdr" => print_elf32_phdr(Elf32Hdr::new(&mapped_file), &mapped_file),
+                    "hdr" => print_elf32_hdr(&mapped_file),
+                    "phdr" => print_elf32_phdr(&mapped_file),
                     _ => eprintln!("引数のflagsの処理ミスってますよ、"),
                 }
             },
             "ELF64" => {
                 match flag {
-                    "hdr" => print_elf64_hdr(Elf64Hdr::new(&mapped_file)),
-                    "phdr" => print_elf64_phdr(Elf64Hdr::new(&mapped_file), &mapped_file),
-                    "shdr" => print_elf64_shdr(Elf64Hdr::new(&mapped_file), &mapped_file),
+                    "hdr" => print_elf64_hdr(&mapped_file),
+                    "phdr" => print_elf64_phdr(&mapped_file),
+                    "shdr" => print_elf64_shdr(&mapped_file),
+                    "sym" => print_sym64(&mapped_file),
                     _ => eprintln!("引数のflagsの処理ミスってますよ、"),
                 }
             },

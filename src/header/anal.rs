@@ -56,7 +56,7 @@ const ET_HIPROC: [u8; 2] = [0xff, 0xff];
 // const EM_NONE: [u8; 2] = [0x00, 0x00];
 // const EM_M32: [u8; 2] = [0x01, 0x00];
 // const EM_SPARC: [u8; 2] = [0x02, 0x00];
-// const EM_386: [u8; 2] = [0x03, 0x00];
+const EM_386: [u8; 2] = [0x03, 0x00];
 // const EM_68K: [u8; 2] = [0x04, 0x00];
 // const EM_88K: [u8; 2] = [0x05, 0x00];
 // resrved: [u8; 2] = [0x06, 0x00];  // reserved for future use (was EM_486)
@@ -214,7 +214,9 @@ pub fn elf_type(e_type: Elf64Half) -> String {
 }
 
 pub fn elf_machine(e_machine: Elf64Half) -> String {
-    if e_machine == EM_X86_64 {
+    if e_machine == EM_386 {
+        "i386".to_string()
+    } else if e_machine == EM_X86_64 {
         "x86-64 architecture".to_string()
     } else if e_machine == EM_AARCH_64 {
         "Aarch64".to_string()
@@ -430,7 +432,7 @@ pub fn shdr64_type(sh_type: Elf64Word) -> String {
     } else if sh_type == SHT_SHLIB {
         "SHLIB".to_string()
     } else if sh_type == SHT_DYNSYM {
-        "SYNSYM".to_string()
+        "DYNSYM".to_string()
     } else if sh_type == SHT_NUM {
         "NUM".to_string()
     } else if sh_type == SHT_INIT_ARRAY {

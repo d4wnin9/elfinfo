@@ -230,7 +230,8 @@ impl Elf64Shdr {
 
 
 /* elf64 header preview */
-pub fn print_elf64_hdr(hdr: Elf64Hdr) {
+pub fn print_elf64_hdr(bin: &[u8]) {
+    let hdr = Elf64Hdr::new(&bin);
     println!("ELF Header:");
     println!("  Magic:   {}", ei_magic(hdr.e_ident));
     println!("  Class:                             {}", ei_class(hdr.e_ident));
@@ -251,7 +252,8 @@ pub fn print_elf64_hdr(hdr: Elf64Hdr) {
     println!("  Section header string table index: 0x{}", elf_shstrndx(hdr.e_shstrndx));
 }
 
-pub fn print_elf64_phdr(hdr: Elf64Hdr, bin: &[u8]) {
+pub fn print_elf64_phdr(bin: &[u8]) {
+    let hdr = Elf64Hdr::new(&bin);
     let e_phoff = usize::from_str_radix(&elf64_phoff(hdr.e_phoff), 16).unwrap();
     let e_phnum = usize::from_str_radix(&elf_phnum(hdr.e_phnum), 16).unwrap();
     let mut phdr_vec = Vec::new();
@@ -277,7 +279,8 @@ pub fn print_elf64_phdr(hdr: Elf64Hdr, bin: &[u8]) {
     phdr_table.printstd();
 }
 
-pub fn print_elf64_shdr(hdr: Elf64Hdr, bin: &[u8]) {
+pub fn print_elf64_shdr(bin: &[u8]) {
+    let hdr = Elf64Hdr::new(&bin);
     let e_shoff = usize::from_str_radix(&elf64_shoff(hdr.e_shoff), 16).unwrap();
     let e_shnum = usize::from_str_radix(&elf_shnum(hdr.e_shnum), 16).unwrap();
     let mut shdr_vec = Vec::new();
