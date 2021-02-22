@@ -1,6 +1,6 @@
 [package]
 name = "elfinfo"
-version = "0.3.1"
+version = "0.4.0"
 authors = ["d4wnin9 <d4wnin9@gmail.com>"]
 edition = "2018"
 
