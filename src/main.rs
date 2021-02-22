@@ -38,6 +38,12 @@ fn main() {
             .alias("symbols")
         )
 
+        .arg(Arg::with_name("dyn")
+            .help("Display the dynamic section (if present)")
+            .short("d")
+            .long("dynamic")
+        )
+
         .arg(Arg::with_name("filename")
             .help("file name")
             .required(true)
@@ -61,6 +67,10 @@ fn main() {
         };
     } else if args.is_present("sym") {
         if let Err(e) = elfinfo::run(filename, "sym") {
+            eprintln!("Application Error: {}", e);
+        };
+    } else if args.is_present("dyn") {
+        if let Err(e) = elfinfo::run(filename, "dyn") {
             eprintln!("Application Error: {}", e);
         };
     } else {

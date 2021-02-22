@@ -10,6 +10,8 @@ mod header;
 use header::*;
 mod symbol;
 use symbol::*;
+mod dynamic;
+use dynamic::*;
 
 
 /* Type for a 16-bit quantity. */
@@ -65,6 +67,7 @@ pub fn run(filename: &str, flag: &str) -> Result<(), Box<dyn Error>>{
                     "phdr" => print_elf64_phdr(&mapped_file),
                     "shdr" => print_elf64_shdr(&mapped_file),
                     "sym" => print_sym64(&mapped_file),
+                    "dyn" => print_dyn64(&mapped_file),
                     _ => eprintln!("引数のflagsの処理ミスってますよ、"),
                 }
             },

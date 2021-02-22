@@ -10,15 +10,16 @@ cargo install --git https://github.com/d4wnin9/elfinfo.git --branch=main
 ```sh
 elfinfo [FLAGS] <filename>
 ```
-今はまだheaderのみ
 
 ## Flags
-```sh
-    --help               Prints help information
--h, --file-header        Display the ELF file header
--l, --program-headers    Display the program headers
--V, --version            Prints version information
-
+```txt
+    -d, --dynamic            Display the dynamic section (if present)
+        --help               Prints help information
+    -h, --file-header        Display the ELF file header
+    -l, --program-headers    Display the program headers
+    -S, --section-headers    Display the sections' header
+    -s, --syms               Display the symbol table
+    -V, --version            Prints version information
 ```
 
 ## Args

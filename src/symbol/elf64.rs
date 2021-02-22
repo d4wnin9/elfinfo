@@ -92,7 +92,7 @@ pub fn print_sym64(bin: &[u8]) {
             continue;
         }
     }
-    println!("{}\n{}", strtab_offset, strtab_size);
+
     println!(".dynsym");
     for dynsym in dynsym_vec.iter() {
         println!("{}", sym64_name(dynsym.st_name, dynstr_offset, dynstr_size, &bin));
