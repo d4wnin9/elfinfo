@@ -59,6 +59,6 @@ pub fn print_dyn64(bin: &[u8]) {
     println!("Dynamic section at offset 0x{:x} contains {} entries:", dyn_offset, dyn_size/16);
     println!("Type    Name/Value");
     for dynamic in dyn_vec.iter() {
-        println!("{}    {:?}", dyn64_tag(dynamic.d_tag), dynamic.d_un);
+        println!("{}    {}", dyn64_tag(dynamic.d_tag), dyn64_un(dynamic.d_tag, dynamic.d_un));
     }
 }

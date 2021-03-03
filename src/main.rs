@@ -44,6 +44,12 @@ fn main() {
             .long("dynamic")
         )
 
+        .arg(Arg::with_name("checksec")
+            .help("Display properties of executables")
+            .short("c")
+            .long("checksec")
+        )
+
         .arg(Arg::with_name("filename")
             .help("file name")
             .required(true)
@@ -71,6 +77,10 @@ fn main() {
         };
     } else if args.is_present("dyn") {
         if let Err(e) = elfinfo::run(filename, "dyn") {
+            eprintln!("Application Error: {}", e);
+        };
+    } else if args.is_present("checksec") {
+        if let Err(e) = elfinfo::run(filename, "checksec") {
             eprintln!("Application Error: {}", e);
         };
     } else {

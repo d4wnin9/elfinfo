@@ -1,5 +1,5 @@
 # elfinfo
-binary static analysis tools like `readelf`, `checksec`.
+binary static analysis tool like `readelf`, `checksec`.
 
 ## Installation
 ```install
@@ -13,6 +13,7 @@ elfinfo [FLAGS] <filename>
 
 ## Flags
 ```txt
+    -c, --checksec           Display properties of executables
     -d, --dynamic            Display the dynamic section (if present)
         --help               Prints help information
     -h, --file-header        Display the ELF file header

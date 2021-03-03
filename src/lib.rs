@@ -12,6 +12,8 @@ mod symbol;
 use symbol::*;
 mod dynamic;
 use dynamic::*;
+mod checksec;
+use checksec::*;
 
 
 /* Type for a 16-bit quantity. */
@@ -68,6 +70,7 @@ pub fn run(filename: &str, flag: &str) -> Result<(), Box<dyn Error>>{
                     "shdr" => print_elf64_shdr(&mapped_file),
                     "sym" => print_sym64(&mapped_file),
                     "dyn" => print_dyn64(&mapped_file),
+                    "checksec" => checksec64(&mapped_file),
                     _ => eprintln!("引数のflagsの処理ミスってますよ、"),
                 }
             },
