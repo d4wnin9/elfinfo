@@ -146,8 +146,8 @@ pub fn checksec64(bin: &[u8]) {
             _ => "\x1b[43m\x1b[31mError\x1b[0m",
         },
         match nx {
-            0 => "\x1b[31mNX disable\x1b[0m",
-            1 => "\x1b[32mNX enable\x1b[0m",
+            0 => "\x1b[31mNX disabled\x1b[0m",
+            1 => "\x1b[32mNX enabled\x1b[0m",
             _ => "\x1b[43m\x1b[31mError\x1b[0m",
         },
         match pie {
